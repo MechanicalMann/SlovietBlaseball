@@ -1,2 +1,6 @@
+from sloviet.encoder import RingEncoder
+
+
 def main():
-    print('Привет мир!')
+    cipher = RingEncoder()
+    print(cipher.encode('Hello, world!'))
