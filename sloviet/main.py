@@ -1,6 +1,6 @@
-from sloviet.encoder import RingEncoder
+from sloviet.encoder import CheckerboardEncoder, RingEncoder
 
 
 def main():
-    cipher = RingEncoder()
-    print(cipher.encode('Hello, world!'))
+    cipher = CheckerboardEncoder('blaseboard.cfg')
+    print(cipher.encode('Hello world'))
