@@ -1,6 +1,9 @@
+from sloviet.cipher import OneTimePadCipher
 from sloviet.encoder import CheckerboardEncoder, RingEncoder
 
 
 def main():
-    cipher = CheckerboardEncoder('blaseboard.cfg')
-    print(cipher.encode('Hello world'))
+    encoder = CheckerboardEncoder('blaseboard.cfg')
+    cipher = OneTimePadCipher('otp.txt')
+    plaincode = encoder.encode('Hello world')
+    print(cipher.encrypt(plaincode))
