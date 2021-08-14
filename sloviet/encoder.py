@@ -1,11 +1,15 @@
 from abc import ABC, abstractmethod
 import configparser
+from sloviet.messaging import Message, MessageHandler
 import string
 
 
-class Encoder(ABC):
+class Encoder(MessageHandler, ABC):
     def encode(self, plaintext: str) -> str:
         return ''.join([self.get_char(c) for c in plaintext])
+
+    def handle(self, message: Message) -> Message:
+        return Message(self.encode(message.content))
 
     @abstractmethod
     def get_char(self, char: str) -> str:
