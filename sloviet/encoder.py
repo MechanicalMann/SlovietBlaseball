@@ -3,9 +3,13 @@ import configparser
 from sloviet.messaging import Message, MessageHandler
 import string
 
+DIGITS = '0123456789'
+
 
 class Encoder(MessageHandler, ABC):
     def encode(self, plaintext: str) -> str:
+        if not plaintext:
+            return ''
         return ''.join([self.get_char(c) for c in plaintext])
 
     def handle(self, message: Message) -> Message:
@@ -35,6 +39,7 @@ class CheckerboardEncoder(Encoder):
         self.unknown = unknown
         self.spaces = spaces
         self.code_chars = {}
+        self.figures = False
         if not file in self.config.read(file):
             raise ValueError('Could not read config file!')
         if not 'Characters' in self.config:
@@ -44,10 +49,17 @@ class CheckerboardEncoder(Encoder):
                 v: k
                 for k, v in self.config['CodeCharacters'].items()
             }
+            self.figure_code = self.config['Codes'].get('FIGURE', '')
+            self.figure_char = self.config['CodeCharacters'].get('FIGURE', '')
 
     def get_char(self, char: str) -> str:
+        if char in DIGITS:
+            return char
         if char == ' ' and self.spaces:
             return self.config['Codes'].get('SPACE', '')
+        if char == self.figure_char:
+            self.figures = not self.figures
+            return self.figure_code
         if char in self.code_chars:
             code = self.code_chars[char]
             return self.config['Codes'][code]

@@ -10,7 +10,7 @@ def main():
     game = Game('1bf2ec1a-4df8-4446-b7f0-55ba901d4f30')
     encoder = CheckerboardEncoder('blaseboard.cfg')
     cipher = OneTimePadCipher('otp.txt')
-    adapter = GameAdapter()
+    adapter = GameAdapter(encoder)
     pipeline = MessagePipeline(adapter, [encoder, cipher, ConsoleHandler()])
 
     game.register(pipeline)

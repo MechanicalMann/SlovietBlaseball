@@ -42,4 +42,6 @@ class MessagePipeline(EventListener):
 
 class ConsoleHandler(MessageHandler):
     def handle(self, message: Message) -> Message:
-        print(message.content)
+        print(' '.join([
+            message.content[i:i + 5] for i in range(0, len(message.content), 5)
+        ]))
