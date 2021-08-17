@@ -40,8 +40,19 @@ class MessagePipeline(EventListener):
         self.handlers.append(handler)
 
 
+class GroupFormatHandler(MessageHandler):
+    def __init__(self, prefix: str = '', suffix: str = '') -> None:
+        self.prefix = prefix
+        self.suffix = suffix
+
+    def handle(self, message: Message) -> Message:
+        grouped = ' '.join([
+            message.content[i:i + 5] for i in range(0, len(message.content), 5)
+        ])
+        return Message(f'{self.prefix}{grouped}{self.suffix}')
+
+
 class ConsoleHandler(MessageHandler):
     def handle(self, message: Message) -> Message:
-        print(' '.join([
-            message.content[i:i + 5] for i in range(0, len(message.content), 5)
-        ]))
+        print(message.content)
+        return message

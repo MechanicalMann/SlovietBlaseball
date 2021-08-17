@@ -414,5 +414,4 @@ def guess_event_type(description: str) -> int:
         return EventType.PLAYER_STUCK
     if re.search('horse power achieved', description, re.IGNORECASE | re.MULTILINE):
         return EventType.HORSE_POWER
-    print(f'Unable to guess event type: {description}')
     return None
