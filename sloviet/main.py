@@ -1,4 +1,4 @@
-import asyncio, os
+import asyncio, os, sys
 from sloviet.reader import Reader
 from sloviet.blaseball.messaging import GameAdapter
 from sloviet.messaging import ConsoleHandler, GroupFormatHandler, MessagePipeline
@@ -8,10 +8,14 @@ from sloviet.encoder import CheckerboardEncoder
 
 
 def main():
+    if len(sys.argv) < 2:
+        exit(1)
+
+    game_id = sys.argv[1]
     reader = Reader()
     reader.load('audio', 0.75)
 
-    game = Game('1bf2ec1a-4df8-4446-b7f0-55ba901d4f30')
+    game = Game(game_id)
     encoder = CheckerboardEncoder('blaseboard.cfg')
     cipher = OneTimePadCipher('otp.txt')
     adapter = GameAdapter(encoder)
