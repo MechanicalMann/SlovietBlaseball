@@ -10,6 +10,8 @@ class Game(EventEmitter):
         game = datablase.get_game_by_id(game_id)
         if not game:
             raise ValueError('Invalid game ID')
+        self.season = game['season'] + 1
+        self.day = game['day'] + 1
         self.home_team = game['homeTeamName']
         self.home_team_nick = game['homeTeamNickname']
         self.away_team = game['awayTeamName']

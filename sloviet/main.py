@@ -1,4 +1,4 @@
-import asyncio
+import asyncio, os
 from sloviet.reader import Reader
 from sloviet.blaseball.messaging import GameAdapter
 from sloviet.messaging import ConsoleHandler, GroupFormatHandler, MessagePipeline
@@ -23,6 +23,8 @@ def main():
     ])
 
     game.register(pipeline)
+
+    reader.identify(os.getpid(), f'{game.season:03d}', f'{game.day:02d}')
 
     loop = asyncio.get_event_loop()
     loop.create_task(game.get_events())

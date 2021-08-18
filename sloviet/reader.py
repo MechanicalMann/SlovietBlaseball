@@ -11,6 +11,8 @@ class Reader(mp.Process, MessageHandler):
         super().__init__(*args, **kwargs)
         self._queue: Queue[Message] = Queue()
         self._numbers: Dict[str, bytes] = {}
+        self._silence = bytes
+        self._header = bytes
         self._chars = ' 0123456789'
         self.duration = 0.0
 
@@ -19,12 +21,26 @@ class Reader(mp.Process, MessageHandler):
         for file in os.listdir(dir):
             filename = os.fsdecode(file)
             digit = re.match(r'(\d).wav', filename)
-            if not digit:
+            if not digit and not filename == 'silence.wav':
                 continue
+            if filename == 'silence.wav':
+                with open(os.path.join(dir, filename), 'rb') as f:
+                    self._header = f.read(44)
+                    self._silence = f.read()
+                    continue
             with open(os.path.join(dir, filename), 'rb') as f:
+                f.seek(44)
                 self._numbers[digit[1]] = f.read()
         if not len(self._numbers) == 10:
             raise ValueError('Invalid audio directory')
+        sys.stdout.buffer.write(self._header)
+        sys.stdout.buffer.flush()
+
+    def identify(self, agent_id, group_id, group_count):
+        self.add_message(
+            Message(
+                f'{agent_id}  {agent_id}  {agent_id}  {group_id} {group_id} {group_count} {group_count} '
+            ))
 
     def add_message(self, message: Message):
         self._queue.put_nowait(message)
@@ -38,8 +54,7 @@ class Reader(mp.Process, MessageHandler):
             for c in message.content:
                 if not c in self._chars:
                     continue
-                digit = self._numbers.get(c)
-                if digit:
-                    sys.stdout.buffer.write(digit)
-                    # sys.stdout.buffer.flush()
+                digit = self._numbers.get(c) or self._silence
+                sys.stdout.buffer.write(digit)
+                sys.stdout.buffer.flush()
                 await asyncio.sleep(self.duration)
