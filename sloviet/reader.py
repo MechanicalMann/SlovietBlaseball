@@ -7,8 +7,9 @@ from sloviet.messaging import Message, MessageHandler
 
 
 class Reader(mp.Process, MessageHandler):
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, skip_headers: bool, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
+        self.skip_headers = skip_headers
         self._queue: Queue[Message] = Queue()
         self._numbers: Dict[str, bytes] = {}
         self._silence = bytes
@@ -29,7 +30,8 @@ class Reader(mp.Process, MessageHandler):
                     self._silence = f.read()
                     continue
             with open(os.path.join(dir, filename), 'rb') as f:
-                f.seek(44)
+                if self.skip_headers:
+                    f.seek(44)
                 self._numbers[digit[1]] = f.read()
         if not len(self._numbers) == 10:
             raise ValueError('Invalid audio directory')
