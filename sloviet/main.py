@@ -18,14 +18,26 @@ parser.add_argument(
     const=True,
     action='store_const',
     help='When set, skips sending WAV RIFF header bytes for each digit.')
+parser.add_argument(
+    '-t',
+    '--text-only',
+    default=False,
+    const=True,
+    action='store_const',
+    help=
+    'When set, the output will be the text of all encrypted messages instead of audio.'
+)
 parser.add_argument('game_id')
 
 
 def main():
     args = parser.parse_args()
 
-    reader = Reader(args.skip_headers)
-    reader.load('audio', 0.75)
+    if args.text_only:
+        reader = ConsoleHandler()
+    else:
+        reader = Reader(args.skip_headers)
+        reader.load('audio', 0.75)
 
     game = Game(args.game_id)
     encoder = CheckerboardEncoder('blaseboard.cfg')
@@ -44,7 +56,8 @@ def main():
 
     loop = asyncio.get_event_loop()
     loop.create_task(game.get_events())
-    loop.create_task(reader.read())
+    if hasattr(reader, 'read'):
+        loop.create_task(reader.read())
     try:
         loop.run_forever()
     except KeyboardInterrupt:

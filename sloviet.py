@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python
 from sloviet.main import main
 
 if __name__ == '__main__':

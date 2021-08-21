@@ -19,6 +19,9 @@ class MessageHandler(ABC):
     def handle(self, message: Message) -> Message:
         return message
 
+    def identify(self, agent_id, group_id, group_count):
+        return Message(f'{agent_id} {group_id} {group_count}')
+
 
 class MessagePipeline(EventListener):
     def __init__(self,
@@ -56,3 +59,8 @@ class ConsoleHandler(MessageHandler):
     def handle(self, message: Message) -> Message:
         print(message.content)
         return message
+
+    def identify(self, agent_id, group_id, group_count):
+        print(f'{agent_id}  {agent_id}  {agent_id}')
+        print(f'{group_id}  {group_id}')
+        print(f'{group_count}  {group_count}')
