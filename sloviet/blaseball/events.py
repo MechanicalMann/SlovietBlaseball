@@ -29,7 +29,7 @@ class Game(EventEmitter):
 
     async def get_events(self):
         for event in chronicler.get_game_updates(
-                game_ids=['1bf2ec1a-4df8-4446-b7f0-55ba901d4f30'], lazy=True):
+                game_ids=[self.id], lazy=True):
             if not 'data' in event:
                 continue
             ge = GameEvent(event['data'], game=self)
